@@ -34,7 +34,8 @@ class RedisServiceProvider implements ServiceProviderInterface
         $container->set(
             RedisManager::class,
             static function (ConfigRepositoryInterface $config) {
-                $redisManager = new RedisManager();
+                $defaults = $config->get('redis.defaults', []);
+                $redisManager = new RedisManager($defaults['connection'] ?? 'default');
 
                 foreach ($config->get('redis.connections', []) as $name => $connection) {
                     $poolConfig = new PoolConfig(

@@ -12,6 +12,10 @@ Makise-Co Redis integration bundle
     use function MakiseCo\Env\env;
     
     return [
+        'defaults' => [
+            // a connection pool named as "example" will be used as default connection pool
+            'connection' => 'example',
+        ],
         'connections' => [
             // "example" is a pool name
             'example' => [
@@ -44,7 +48,11 @@ Makise-Co Redis integration bundle
 * Take connection pool from RedisManager:
     ```php
     /** @var \Psr\Container\ContainerInterface $container */
-    $pool = $container->get(\MakiseCo\Redis\RedisManager::class)->getPool('example');
+    $redisManager = $container->get(\MakiseCo\Redis\RedisManager::class);
+
+    $pool = $redisManager->getPool('example');
+    // or get default connection pool
+    $pool = $redisManager->getPool();
   
     $redis = $pool->borrow();
     // do something with Redis connection
@@ -54,7 +62,9 @@ Makise-Co Redis integration bundle
         $pool->return($redis);
     }
   
-    // or use LazyConnection as an abstraction under pool
-    $lazyConnection = $container->get(\MakiseCo\Redis\RedisManager::class)->getLazyConnection('example');
+    // or use LazyConnection as an abstraction over connection pool
+    $lazyConnection = $redisManager->getLazyConnection('example');
+    // or get lazy connection for default connection pool
+    $lazyConnection = $redisManager->getLazyConnection();
     $lazyConnection->set('test', '1');
     ```
