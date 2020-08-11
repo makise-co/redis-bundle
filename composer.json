@@ -1,0 +1,41 @@
+{
+    "name": "makise-co/redis-bundle",
+    "description": "Makise-Co Redis integration bundle",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "makise-co",
+        "redis",
+        "bundle"
+    ],
+    "authors": [
+        {
+            "name": "Dmitry K.",
+            "email": "coder1994@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.4",
+        "ext-swoole": ">=4.4",
+        "ext-redis": ">=4.4",
+        "makise-co/redis": "^1.0",
+        "makise-co/framework": "^0.0.31"
+    },
+    "require-dev": {
+        "swoole/ide-helper": "^4.5",
+        "phpunit/phpunit": "^9.1",
+        "symfony/var-dumper": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MakiseCo\\Redis\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MakiseCo\\Redis\\Tests\\": "tests/"
+        }
+    }
+}
