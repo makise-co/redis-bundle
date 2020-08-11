@@ -15,6 +15,8 @@ use MakiseCo\Disposable\DisposableInterface;
 
 class RedisManager implements DisposableInterface
 {
+    protected string $defaultPool;
+
     /**
      * Key - database config name
      * Value - ConnectionPool
@@ -23,8 +25,15 @@ class RedisManager implements DisposableInterface
      */
     protected array $pools = [];
 
-    public function getPool(string $poolName): RedisPool
+    public function __construct(string $defaultPool)
     {
+        $this->defaultPool = $defaultPool;
+    }
+
+    public function getPool(?string $poolName = null): RedisPool
+    {
+        $poolName ??= $this->defaultPool;
+
         $pool = $this->pools[$poolName] ?? null;
         if (null === $pool) {
             throw new PoolNotFoundException($poolName);
@@ -33,7 +42,7 @@ class RedisManager implements DisposableInterface
         return $pool;
     }
 
-    public function getLazyConnection(string $poolName): RedisLazyConnection
+    public function getLazyConnection(?string $poolName = null): RedisLazyConnection
     {
         $pool = $this->getPool($poolName);
 
