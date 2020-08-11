@@ -12,6 +12,7 @@ namespace MakiseCo\Redis;
 
 use DI\Container;
 use MakiseCo\Config\ConfigRepositoryInterface;
+use MakiseCo\Http\Events\WorkerExit;
 use MakiseCo\Http\Events\WorkerStarted;
 use MakiseCo\Pool\PoolConfig;
 use MakiseCo\Providers\ServiceProviderInterface;
@@ -23,11 +24,19 @@ class RedisServiceProvider implements ServiceProviderInterface
     {
         $dispatcher = $container->get(EventDispatcher::class);
 
-        // initialize redis pools when http worker is started
+        // initialize redis pools when http worker started
         $dispatcher->addListener(
             WorkerStarted::class,
             static function () use ($container) {
                 $container->get(RedisManager::class)->initPools();
+            }
+        );
+
+        // close redis pools when http worker stopped
+        $dispatcher->addListener(
+            WorkerExit::class,
+            static function () use ($container) {
+                $container->get(RedisManager::class)->closePools();
             }
         );
 
