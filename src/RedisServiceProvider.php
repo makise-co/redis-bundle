@@ -14,9 +14,10 @@ use DI\Container;
 use MakiseCo\Config\ConfigRepositoryInterface;
 use MakiseCo\Http\Events\WorkerExit;
 use MakiseCo\Http\Events\WorkerStarted;
-use MakiseCo\Pool\PoolConfig;
 use MakiseCo\Providers\ServiceProviderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use function array_key_exists;
 
 class RedisServiceProvider implements ServiceProviderInterface
 {
@@ -47,19 +48,26 @@ class RedisServiceProvider implements ServiceProviderInterface
                 $redisManager = new RedisManager($defaults['connection'] ?? 'default');
 
                 foreach ($config->get('redis.connections', []) as $name => $connection) {
-                    $poolConfig = new PoolConfig(
-                        $connection['pool']['minActive'] ?? 0,
-                        $connection['pool']['maxActive'] ?? 1,
-                        $connection['pool']['maxWaitTime'] ?? 6,
-                        $connection['pool']['maxIdleTime'] ?? 15,
-                        $connection['pool']['idleCheckInterval'] ?? 30,
+                    $pool = new RedisPool(
+                        ConnectionConfig::fromArray($connection['connection'])
                     );
 
-                    $pool = new RedisPool(
-                        $poolConfig,
-                        null,
-                        RedisConnectionConfig::fromArray($connection['connection']),
-                    );
+                    $poolConfig = $connection['pool'];
+                    if (array_key_exists('minActive', $poolConfig)) {
+                        $pool->setMinActive($poolConfig['minActive']);
+                    }
+                    if (array_key_exists('maxActive', $poolConfig)) {
+                        $pool->setMinActive($poolConfig['maxActive']);
+                    }
+                    if (array_key_exists('maxWaitTime', $poolConfig)) {
+                        $pool->setMaxWaitTime($poolConfig['maxWaitTime']);
+                    }
+                    if (array_key_exists('maxIdleTime', $poolConfig)) {
+                        $pool->setMaxIdleTime($poolConfig['maxIdleTime']);
+                    }
+                    if (array_key_exists('validationInterval', $poolConfig)) {
+                        $pool->setValidationInterval($poolConfig['validationInterval']);
+                    }
 
                     $redisManager->addPool($name, $pool);
                 }
