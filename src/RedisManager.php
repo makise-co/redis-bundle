@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace MakiseCo\Redis;
 
-use MakiseCo\Database\Exceptions\PoolNotFoundException;
 use MakiseCo\Disposable\DisposableInterface;
 
 class RedisManager implements DisposableInterface
@@ -36,7 +35,7 @@ class RedisManager implements DisposableInterface
 
         $pool = $this->pools[$poolName] ?? null;
         if (null === $pool) {
-            throw new PoolNotFoundException($poolName);
+            throw new Exception\PoolNotFoundException($poolName);
         }
 
         return $pool;
