@@ -21,7 +21,7 @@
         "ext-swoole": ">=4.4",
         "ext-redis": ">=4.4",
         "makise-co/redis": "^1.0",
-        "makise-co/framework": "^1.0"
+        "makise-co/framework": "~2.0.0"
     },
     "require-dev": {
         "swoole/ide-helper": "^4.5",

@@ -10,9 +10,7 @@ declare(strict_types=1);
 
 namespace MakiseCo\Redis;
 
-use MakiseCo\Disposable\DisposableInterface;
-
-class RedisManager implements DisposableInterface
+class RedisManager
 {
     protected string $defaultPool;
 
