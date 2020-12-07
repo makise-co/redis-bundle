@@ -11,31 +11,26 @@ declare(strict_types=1);
 namespace MakiseCo\Redis;
 
 use DI\Container;
+use MakiseCo\Bootstrapper;
 use MakiseCo\Config\ConfigRepositoryInterface;
-use MakiseCo\Http\Events\WorkerExit;
-use MakiseCo\Http\Events\WorkerStarted;
 use MakiseCo\Providers\ServiceProviderInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use function array_key_exists;
 
 class RedisServiceProvider implements ServiceProviderInterface
 {
+    public const SERVICE_NAME = 'redis';
+
     public function register(Container $container): void
     {
-        $dispatcher = $container->get(EventDispatcher::class);
+        /** @var Bootstrapper $bootstrapper */
+        $bootstrapper = $container->get(Bootstrapper::class);
 
-        // initialize redis pools when http worker started
-        $dispatcher->addListener(
-            WorkerStarted::class,
+        $bootstrapper->addService(
+            self::SERVICE_NAME,
             static function () use ($container) {
                 $container->get(RedisManager::class)->initPools();
-            }
-        );
-
-        // close redis pools when http worker stopped
-        $dispatcher->addListener(
-            WorkerExit::class,
+            },
             static function () use ($container) {
                 $container->get(RedisManager::class)->closePools();
             }
