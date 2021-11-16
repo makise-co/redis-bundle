@@ -16,7 +16,7 @@ return [
         'connection' => 'default',
     ],
     'connections' => [
-        // "example" is a pool name
+        // "default" is a pool name
         'default' => [
             'connection' => [
                 'host' => env('REDIS_HOST', '127.0.0.1'),
@@ -26,6 +26,25 @@ return [
                 'timeout' => 10.0,
                 'readTimeout' => 5.0,
                 'retryInterval' => 5,
+            ],
+            'pool' => [
+                'minActive' => (int)env('REDIS_POOL_MIN_ACTIVE', 0),
+                'maxActive' => (int)env('REDIS_POOL_MAX_ACTIVE', 2),
+                'maxWaitTime' => (float)env('REDIS_POOL_MAX_WAIT_TIME', 5.0),
+                'maxIdleTime' => (int)env('REDIS_POOL_MAX_IDLE_TIME', 30),
+                'validationInterval' => (float)env('REDIS_POOL_VALIDATION_INTERVAL', 30.0),
+            ],
+        ],
+        // "sentinel" is a pool name
+        'sentinel' => [
+            'connection' => [
+                'hosts' => env('REDIS_SENTINEL_HOST', ['127.0.0.1:26379']),
+                'password' => env('REDIS_PASSWORD'),
+                'database' => (int)env('REDIS_DATABASE', 0),
+                'timeout' => 10.0,
+                'readTimeout' => 5.0,
+                'retryInterval' => 5,
+                'replication' => 'sentinel',
             ],
             'pool' => [
                 'minActive' => (int)env('REDIS_POOL_MIN_ACTIVE', 0),
