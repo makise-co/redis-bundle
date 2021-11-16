@@ -48,9 +48,17 @@ class RedisServiceProvider implements ServiceProviderInterface
                 $redisManager = new RedisManager($defaults['connection'] ?? 'default');
 
                 foreach ($config->get('redis.connections', []) as $name => $connection) {
-                    $pool = new RedisPool(
-                        ConnectionConfig::fromArray($connection['connection'])
-                    );
+                    $replication = $connection['connection']['replication'] ?? '';
+                    if ($replication === 'sentinel') {
+                        $pool = new RedisPool(
+                            SentinelConnectionConfig::fromArray($connection['connection']),
+                            new RedisSentinelConnector(),
+                        );
+                    } else {
+                        $pool = new RedisPool(
+                            ConnectionConfig::fromArray($connection['connection'])
+                        );
+                    }
 
                     $poolConfig = $connection['pool'];
                     if (array_key_exists('minActive', $poolConfig)) {

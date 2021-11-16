@@ -31,6 +31,16 @@ class IntegrationTest extends TestCase
 
             try {
                 self::assertSame('123', $redisManager->getPool()->get('test'));
+            } catch (\Throwable $e) {
+                $redisManager->closePools();
+
+                throw $e;
+            }
+
+            $redisManager->getPool('sentinel')->set('test', '456');
+
+            try {
+                self::assertSame('456', $redisManager->getPool()->get('test'));
             } finally {
                 $redisManager->closePools();
             }
